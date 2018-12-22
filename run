@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
+require 'inputs'
+require 'yaml'
 require './lib/derren.rb'
 
-loop do
-  Derren.call
-end
+Derren.call

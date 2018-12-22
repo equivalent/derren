@@ -1,6 +1,8 @@
 module Derren
   def self.call
-    puts 'hi'
-    sleep 100
+    a = YAML.load_file('./config.yml')
+    p a
+
   end
 end
+
