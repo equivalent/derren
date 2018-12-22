@@ -1,1 +1,18 @@
-hi: 'bye'
+app:
+  name: pobble
+  spas:
+    dashboard:
+      app_path: '/dash'
+      project_folder_path: ~/git/derren-test-project/dashboard
+      # compile_cmd: 'npm install && npm build'
+    marketing:
+      app_path: '/'
+      project_folder_path: ~/git/derren-test-project/marketing
+    admin:
+      app_path: '/admin'
+      project_folder_path: ~/git/derren-test-project/admin
+  environments:
+    - prod
+    - stg
+    - dev
+
