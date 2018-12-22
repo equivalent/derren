@@ -2,6 +2,7 @@
 
 require 'inputs'
 require 'yaml'
+require 'json'
 require './lib/derren.rb'
 
 Derren.call

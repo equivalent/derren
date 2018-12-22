@@ -1,5 +1,6 @@
+resource_group: 'derren-test-project-res-group'
 app:
-  name: pobble
+  name: 'derrentest'
   spas:
     dashboard:
       app_path: '/dash'
