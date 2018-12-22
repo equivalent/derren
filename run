@@ -1,0 +1,7 @@
+#!/usr/bin/env ruby
+
+require './lib/derren.rb'
+
+loop do
+  Derren.call
+end
