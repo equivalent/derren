@@ -1,9 +1,9 @@
+
 module Derren
   def self.call
     config = Config.new('./config.yml')
     puts "Worknig with application: #{config.app.name}"
 
-    binding.irb
     unless config.app.exist?
       config.app.create
     end
@@ -27,13 +27,21 @@ module Derren
     attr_writer :app_path
 
     def setup
-      cmd = "az storage blob service-properties update --account-name #{config.app.name} --static-website --404-document index.html --index-document index.html"
-      binding.irb
-      res1=  system(cmd)
+      cmd = "az storage account create --name #{name} --kind StorageV2 -g #{config.app.name}"
+      if system(cmd)
+        cmd = "az storage blob service-properties update --account-name #{config.app.name} --static-website --404-document index.html --index-document index.html"
+        res1=  system(cmd)
 
-      res2 = `az storage account show -n #{config.app.name} -g #{config.resource_group} --query "primaryEndpoints.web"`
-      binding.irb
-        
+        res2 = `az storage account show -n #{config.app.name} -g #{config.app.name} --query "primaryEndpoints.web"`
+
+        binding.irb
+      else
+        raise "Was not able to create storage account #{name}"
+      end
+    end
+
+    def sync
+      # 'az storage blob upload-batch -s <SOURCE_PATH> -d $web --account-name <ACCOUNT_NAME>'
     end
 
     def app_path
@@ -51,9 +59,8 @@ module Derren
       @config = config
     end
 
-
     def create
-      if system("az storage account create --name #{name} -g #{config.resource_group}")
+      if system("az group create --name #{name}")
         true
       else
         raise "Was not able to create storage account #{name}"
@@ -62,7 +69,8 @@ module Derren
 
     def exist?
       res = `az storage account check-name --name #{name}`
-      JSON.parse(res.to_s)['nameAvailable'] # true/false
+      avalible = JSON.parse(res.to_s)['nameAvailable'] # true/false
+      !avalible
     end
 
     def spas
@@ -77,10 +85,6 @@ module Derren
 
     def initialize(path_to_config)
       @path = path_to_config
-    end
-
-    def resource_group
-      conf.fetch('resource_group')
     end
 
     def app

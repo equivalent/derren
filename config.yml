@@ -1,5 +1,5 @@
-resource_group: 'derren-test-project-res-group'
 app:
+  location: todo
   name: 'derrentest'
   spas:
     dashboard:
