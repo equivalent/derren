@@ -1,5 +1,5 @@
 app:
-  location: todo
+  location: 'uksouth' # run `az account list-locations` to get name of your location
   name: 'derrentest'
   spas:
     dashboard:

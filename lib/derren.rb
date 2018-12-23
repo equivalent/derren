@@ -26,18 +26,27 @@ module Derren
     attr_accessor :project_folder_path
     attr_writer :app_path
 
+    def combined_name
+      "#{config.app.name}#{name}"
+    end
+
     def setup
-      cmd = "az storage account create --name #{name} --kind StorageV2 -g #{config.app.name}"
+      endpoint = nil
+      cmd = "az storage account create --name #{combined_name} --kind StorageV2 --resource-group #{config.app.name}"
       if system(cmd)
-        cmd = "az storage blob service-properties update --account-name #{config.app.name} --static-website --404-document index.html --index-document index.html"
-        res1=  system(cmd)
+        cmd = "az storage blob service-properties update --account-name #{combined_name} --static-website --404-document index.html --index-document index.html"
+        if system(cmd)
 
-        res2 = `az storage account show -n #{config.app.name} -g #{config.app.name} --query "primaryEndpoints.web"`
-
-        binding.irb
+          cmd = %{az storage account show --name #{combined_name} --resource-group #{config.app.name}}
+          show_response = `cmd`
+          endpoint = JSON.parse(show_response).fetch("primaryEndpoints.web")
+        else
+          raise "Was not able to make #{combined_name} static website host"
+        end
       else
-        raise "Was not able to create storage account #{name}"
+        raise "Was not able to create storage account #{combined_name}"
       end
+      endpoint
     end
 
     def sync
@@ -52,15 +61,15 @@ end
 
 module Derren
   class Application
-    attr_reader :name, :config
+    attr_reader :name, :location
 
-    def initialize(name, config: config)
+    def initialize(name:, location:)
       @name = name
-      @config = config
+      @location = location
     end
 
     def create
-      if system("az group create --name #{name}")
+      if system("az group create --name #{name} --location #{location}")
         true
       else
         raise "Was not able to create storage account #{name}"
@@ -89,7 +98,9 @@ module Derren
 
     def app
       app_hash = conf.fetch('app')
-      app = Application.new(app_hash.fetch('name'), config: self)
+      app = Application.new(
+        name: app_hash.fetch('name'),
+        location: app_hash.fetch('location'))
 
       app_hash
         .fetch('spas')
@@ -102,6 +113,10 @@ module Derren
         end
 
       app
+    end
+
+    def location
+      conf.fetch('location')
     end
 
     private
