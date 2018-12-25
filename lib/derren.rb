@@ -94,7 +94,7 @@ module Derren
       if system(cmd)
         cmd = "az storage blob service-properties update --account-name #{combined_name} --static-website --404-document index.html --index-document index.html"
         if system(cmd)
-          puts "SPA #{name} setup finished (Created under azure storage name#{combined_name}"
+          puts "SPA #{name} setup finished (Created under azure storage name: #{combined_name})"
         else
           raise "Was not able to make #{combined_name} static website host"
         end
