@@ -1,12 +1,19 @@
+module Derren
+  def self.call
+    MainMenu.new.call
+  end
+end
 
 module Derren
-  module ClassMethods
-    def call
-      config = Config.new('./config.yml')
-      puts "Worknig with application: #{config.app.name}"
+  class MainMenu
+    attr_reader :config
+
+    def initialize
+      @config = Config.new('./config.yml')
     end
 
-    def main_menu
+    def call
+      puts "Worknig with application: #{config.app.name}"
       main_menu_setup = 'Setup'
       main_menu_deploy = 'Deploy'
 
@@ -19,6 +26,8 @@ module Derren
       when main_menu_deploy
         spa = pick_spa
         spa.deploy
+        puts "\n"
+        puts spa.endpoint
       end
     end
 
@@ -27,11 +36,9 @@ module Derren
     def pick_spa
       deploy_option_list = config.app.spas.map(&:name)
       deploy_option = Inputs.pick(deploy_option_list)
-      spa = config.app.spas.select { |spa| spa.name == deploy_option }
+      spa = config.app.spas.find { |spa| spa.name == deploy_option }
     end
   end
-
-  extend ClassMethods
 end
 
 
@@ -55,7 +62,7 @@ module Derren
     end
 
     def deploy
-      cmd = "az storage blob upload-batch -s #{project_folder_path} -d $web --account-name #{combined_name}"
+      cmd = "az storage blob upload-batch --source #{project_folder_path} --destination '$web' --account-name #{combined_name}"
       if system(cmd)
         puts "Deploy of SPA #{name} finished.\n\n#{endpoint}"
       else
@@ -69,8 +76,9 @@ module Derren
 
     def endpoint!
       cmd = %{az storage account show --name #{combined_name} --resource-group #{app_name}}
+      puts cmd
       show_response = `#{cmd}`
-      endpoint = JSON.parse(show_response).fetch("primaryEndpoints.web")
+      JSON.parse(show_response).fetch("primaryEndpoints").fetch('web')
     end
 
     def setup
