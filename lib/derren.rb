@@ -22,7 +22,9 @@ module Derren
         main_menu_deploy])
       when main_menu_setup
         config.app.create unless config.app.exist?
-        config.app.spas.each { |spa| spa.setup }
+        config.app.spas.each do |spa|
+          spa.setup unless spa.exist?
+        end
       when main_menu_deploy
         spa = pick_spa
         spa.deploy
@@ -81,6 +83,12 @@ module Derren
       JSON.parse(show_response).fetch("primaryEndpoints").fetch('web')
     end
 
+    def exist?
+      res = `az storage account check-name --name #{combined_name}`
+      avalible = JSON.parse(res.to_s)['nameAvailable'] # true/false
+      !avalible
+    end
+
     def setup
       cmd = "az storage account create --name #{combined_name} --kind StorageV2 --resource-group #{app_name}"
       if system(cmd)
@@ -119,9 +127,7 @@ module Derren
     end
 
     def exist?
-      res = `az storage account check-name --name #{name}`
-      avalible = JSON.parse(res.to_s)['nameAvailable'] # true/false
-      !avalible
+      JSON.parse(`az group exists --name #{name}`) # true/false
     end
 
     def spas
