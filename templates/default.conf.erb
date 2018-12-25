@@ -1,0 +1,10 @@
+server {
+  listen                80;
+
+  location /healthcheck {
+    access_log	off;
+    error_log	off;
+    return 200 'ok';
+  }
+  <%= @spa_conf %>
+}

@@ -1,6 +1,7 @@
 app:
   location: 'uksouth' # run `az account list-locations` to get name of your location
   name: 'derrentest'
+  nginx_config_path: '/home/t/git/derren_proxy/default.conf'
   spas:
     dashboard:
       app_path: '/dash'
@@ -12,8 +13,4 @@ app:
     admin:
       app_path: '/admin'
       project_folder_path: ~/git/derren-test-project/admin
-  environments:
-    - prod
-    - stg
-    - dev
 

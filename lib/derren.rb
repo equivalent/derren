@@ -15,15 +15,23 @@ module Derren
     def call
       puts "Worknig with application: #{config.app.name}"
       main_menu_setup = 'Setup'
+      main_menu_generate_nginx = 'Generate NginX'
       main_menu_deploy = 'Deploy'
 
       case Inputs.pick([
         main_menu_setup,
+        main_menu_generate_nginx,
         main_menu_deploy])
       when main_menu_setup
         config.app.create unless config.app.exist?
         config.app.spas.each do |spa|
           spa.setup unless spa.exist?
+        end
+      when main_menu_generate_nginx
+        if Inputs.yn "Overidde #{config.nginx_config_path} ?"
+          generate_nginx
+        else
+          puts "No action taken"
         end
       when main_menu_deploy
         spa = pick_spa
@@ -35,10 +43,97 @@ module Derren
 
     private
 
+    def generate_nginx
+      NginxConf
+        .new(config: config)
+        .call
+    end
+
     def pick_spa
       deploy_option_list = config.app.spas.map(&:name)
       deploy_option = Inputs.pick(deploy_option_list)
       spa = config.app.spas.find { |spa| spa.name == deploy_option }
+    end
+  end
+end
+
+require 'erb'
+module Derren
+  class NginxConf
+    attr_reader :config
+
+    def initialize(config:)
+      @config = config
+      @spa_conf = ''
+    end
+
+    def call
+      template = ERB.new(File.read('./templates/default.conf.erb'))
+
+      config.app.spas.each do |spa|
+        @spa_conf << add_conf_block(spa)
+      end
+
+      res = template.result(binding)
+      write_file(res)
+      puts res
+    end
+
+    private
+
+    def add_conf_block(spa)
+<<EOF
+
+  location ~ #{spa.app_path}(.*) {
+    proxy_pass #{endpoint_without_path(spa)};
+    proxy_set_header Host #{endpoint_host(spa)};
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection 'upgrade';
+    proxy_cache_bypass $http_upgrade;
+  }
+EOF
+    end
+
+    def endpoint_host(spa)
+      URI.parse(spa.endpoint).host
+    end
+
+    def endpoint_without_path(spa)
+      e = URI.parse(spa.endpoint)
+      e.path = ''
+      e.to_s
+    end
+
+
+    #def add_conf_block(spa)
+#<<EOF
+
+  #location /dash {
+    #proxy_pass https://derrentestdashboard.z33.web.core.windows.net;
+    #proxy_set_header Host derrentestdashboard.z33.web.core.windows.net;
+    #proxy_http_version 1.1;
+    #proxy_set_header Upgrade $http_upgrade;
+    #proxy_set_header Connection 'upgrade';
+    #proxy_cache_bypass $http_upgrade;
+  #}
+
+  #location /dash/ {
+    #proxy_pass https://derrentestdashboard.z33.web.core.windows.net;
+    #proxy_set_header Host derrentestdashboard.z33.web.core.windows.net;
+    #proxy_http_version 1.1;
+    #proxy_set_header Upgrade $http_upgrade;
+    #proxy_set_header Connection 'upgrade';
+    #proxy_cache_bypass $http_upgrade;
+  #}
+#EOF
+    #end
+
+    def write_file(res)
+      File.open(config.nginx_config_path, "w+") do |file|
+        file.write(res)
+        file.close
+      end
     end
   end
 end
@@ -163,8 +258,8 @@ module Derren
       app
     end
 
-    def location
-      conf.fetch('location')
+    def nginx_config_path
+      conf.fetch('app').fetch('nginx_config_path')
     end
 
     private
