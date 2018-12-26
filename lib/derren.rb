@@ -81,19 +81,19 @@ module Derren
 
     private
 
-    def add_conf_block(spa)
-<<EOF
+    #def add_conf_block(spa)
+#<<EOF
 
-  location ~ #{spa.app_path}(.*) {
-    proxy_pass #{endpoint_without_path(spa)};
-    proxy_set_header Host #{endpoint_host(spa)};
-    proxy_http_version 1.1;
-    proxy_set_header Upgrade $http_upgrade;
-    proxy_set_header Connection 'upgrade';
-    proxy_cache_bypass $http_upgrade;
-  }
-EOF
-    end
+  #location ~ #{spa.app_path}(.*) {
+    #proxy_pass #{endpoint_without_path(spa)};
+    #proxy_set_header Host #{endpoint_host(spa)};
+    #proxy_http_version 1.1;
+    #proxy_set_header Upgrade $http_upgrade;
+    #proxy_set_header Connection 'upgrade';
+    #proxy_cache_bypass $http_upgrade;
+  #}
+#EOF
+    #end
 
     def endpoint_host(spa)
       URI.parse(spa.endpoint).host
@@ -105,29 +105,28 @@ EOF
       e.to_s
     end
 
+    def add_conf_block(spa)
+<<EOF
 
-    #def add_conf_block(spa)
-#<<EOF
+  location #{spa.app_path} {
+    proxy_pass #{endpoint_without_path(spa)};
+    proxy_set_header Host #{endpoint_host(spa)};
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection 'upgrade';
+    proxy_cache_bypass $http_upgrade;
+  }
 
-  #location /dash {
-    #proxy_pass https://derrentestdashboard.z33.web.core.windows.net;
-    #proxy_set_header Host derrentestdashboard.z33.web.core.windows.net;
-    #proxy_http_version 1.1;
-    #proxy_set_header Upgrade $http_upgrade;
-    #proxy_set_header Connection 'upgrade';
-    #proxy_cache_bypass $http_upgrade;
-  #}
-
-  #location /dash/ {
-    #proxy_pass https://derrentestdashboard.z33.web.core.windows.net;
-    #proxy_set_header Host derrentestdashboard.z33.web.core.windows.net;
-    #proxy_http_version 1.1;
-    #proxy_set_header Upgrade $http_upgrade;
-    #proxy_set_header Connection 'upgrade';
-    #proxy_cache_bypass $http_upgrade;
-  #}
-#EOF
-    #end
+  location #{spa.app_path}/ {
+    proxy_pass #{endpoint_without_path(spa)};
+    proxy_set_header Host #{endpoint_host(spa)};
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection 'upgrade';
+    proxy_cache_bypass $http_upgrade;
+  }
+EOF
+    end
 
     def write_file(res)
       File.open(config.nginx_config_path, "w+") do |file|
