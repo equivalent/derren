@@ -3,6 +3,8 @@
 > ...and it works!
 >
 > I'm not working on this project anymore if you have any questions pls create an issue in the project. I may turn it into Artile one day if there is enough interest in this
+>
+> More here http://www.rubyflow.com/p/ti5a72-hosting-microservice-spas-on-azure-storage-account-blobs-peroxided-by-nginx
 
 # Derren
 
