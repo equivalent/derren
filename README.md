@@ -18,3 +18,10 @@ az extension add --name storage-preview
 ./run
 ```
 
+### Dummy project
+
+https://github.com/equivalent/derren-example-project
+
+Imagine each folder is own SPA hosted on seperate Azure storage. You Derren (this repo) would deploy the project + generate Nginx conf. All you need to do is copy the Nginx conf to VM running nginx 
+
+> plan was to make this full project that would compile Docker image running nginx, push to container registry and tell VM to pull latest proxy image.
