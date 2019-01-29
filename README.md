@@ -1,4 +1,4 @@
-> this was a proof of concept that One can deploy compiled SPAs to Azure storage accounts BLOB (general purpose 2)  as a static website and then Nginx proxy (hosted on www.mywebsite.com) to different Azure storage accounts static websites (E.g. www.mywebsite.com/ ->  proxy 1st SPA hosted on one Azure storage account https//my-root.azure-storage....com , www.mywebsite.com/management ->proxy 2nd SPA on another Azure storage accounthttps//my-management.azure-storage....com) 
+> this was a proof of concept that one can deploy compiled SPAs to Azure storage accounts BLOB (general purpose 2)  as a static website and then Nginx proxy (hosted on www.mywebsite.com) to different Azure storage accounts static websites (E.g. www.mywebsite.com/ ->  proxy 1st SPA hosted on one Azure storage account https//my-root.azure-storage....com , www.mywebsite.com/management ->proxy 2nd SPA on another Azure storage accounthttps//my-management.azure-storage....com) 
 > 
 > ...and it works!
 >
