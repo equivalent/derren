@@ -25,3 +25,7 @@ https://github.com/equivalent/derren-example-project
 Imagine each folder is own SPA hosted on seperate Azure storage. You Derren (this repo) would deploy the project + generate Nginx conf. All you need to do is copy the Nginx conf to VM running nginx 
 
 > plan was to make this full project that would compile Docker image running nginx, push to container registry and tell VM to pull latest proxy image.
+
+### Useful resoures
+
+* https://docs.microsoft.com/en-us/azure/storage/blobs/storage-blob-static-website  note: you need General Pursouse 2 Active Storage account to host static website. Otherwise it will not work
