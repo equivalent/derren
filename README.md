@@ -12,7 +12,7 @@ Deploy static websites (or SPAs) on Azure Storage Accounts Blobs.
 
 ...**it's freaking magic !**
 
-![](https://www.denofgeek.com/wp-content/uploads/2017/09/derren_brown_main-scaled.jpg)
+![](https://user-images.githubusercontent.com/721990/102477219-5c060780-405c-11eb-9e34-44fcc1bf71eb.jpeg)
 
 
 ```
