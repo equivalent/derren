@@ -28,6 +28,21 @@ Imagine each folder is own SPA hosted on seperate Azure storage. You Derren (thi
 
 > plan was to make this full project that would compile Docker image running nginx, push to container registry and tell VM to pull latest proxy image.
 
+### How does the proxy works ?
+
+It's just simple Nginx proxy simmilar to this:
+
+```
+        location /auth {
+           proxy_pass https://my-auth-spa.microsoft-blob-url.com;
+         }
+
+         location /auth/ {
+           proxy_pass https://my-auth-spa.microsoft-blob-url.com/;
+         }
+```
+
 ### Useful resoures
 
 * https://docs.microsoft.com/en-us/azure/storage/blobs/storage-blob-static-website  note: you need General Pursouse 2 Active Storage account to host static website. Otherwise it will not work
+* https://docs.nginx.com/nginx/admin-guide/web-server/reverse-proxy/
